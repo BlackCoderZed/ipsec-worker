@@ -19,6 +19,7 @@ class KeyInfo:
         self.Email = Email
         self.Password = Password
 
+
 def StartOperation(serverID):
     ticketInfoList = GetTicketInfo(serverID)
     for ticketInfo in ticketInfoList:

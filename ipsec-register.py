@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import string
 import random
+from pathlib import Path
 
 #########################################################################################
 #                                  KeyInfo Class                                        #
@@ -25,6 +26,7 @@ def StartOperation(serverID):
     for ticketInfo in ticketInfoList:
         isSuccess = RegisterUser(ticketInfo)
         if (isSuccess == True):
+            print("User Registeration success")
             ExportToFile(ticketInfo)
             UpdateTicketInfo(ticketInfo)
             SendMail(ticketInfo)
@@ -83,7 +85,7 @@ def SendMail(ticketInfo):
     receiver_email = ticketInfo.Email
     filename = HOME_DIR + ticketInfo.KeyName + '.txt'
     password = 'Password'
-    attachName = ticketInfo.KeyName + '.ovpn'
+    attachName = ticketInfo.KeyName + '.txt'
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
@@ -128,10 +130,8 @@ def RegisterUser(ticketInfo):
     ticketInfo.Password = passwd
     # write to file
     with open('/etc/ppp/chap.secrets','a') as f:
-        f.append('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *')
+        f.write('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *')
     return True
-    
-    print("Registered")
 
 def CheckExist(keyName):
     with open('/etc/ppp/chap.secrets','r') as f:
@@ -142,8 +142,10 @@ def CheckExist(keyName):
             return False
 
 def ExportToFile(ticketInfo):
-    with open(HOME_DIR + ticketInfo.KeyName + '.txt', 'w') as f:
-        textStr = "Type : L2TP/IPSec PSK"
+    myfile = Path(HOME_DIR + ticketInfo.KeyName + '.txt')
+    myfile.touch(exist_ok=True)
+    with open(myfile, 'w') as f:
+        textStr = "Type : L2TP/IPSec PSK" + '\n'
         textStr += "Server : " + SERVER_IP + '\n'
         textStr += "Pre-shared key : " + SECRET_KEY + '\n'
         textStr += "Username : " + ticketInfo.KeyName + '\n'

@@ -153,6 +153,7 @@ def GenerateRandomPassword():
     letters = string.ascii_lowercase
     randomStr = ''.join(random.choice(letters) for i in range(10));
     return randomStr
+
 #########################################################################################
 #                                  Entry Point                                          #
 #########################################################################################

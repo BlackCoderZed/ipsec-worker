@@ -5,6 +5,8 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import string
+import random
 
 #########################################################################################
 #                                  KeyInfo Class                                        #
@@ -17,6 +19,16 @@ class KeyInfo:
         self.Email = Email
         self.Password = Password
 
+def StartOperation(serverID):
+    ticketInfoList = GetTicketInfo(serverID)
+    for ticketInfo in ticketInfoList:
+        isSuccess = RegisterUser(ticketInfo)
+        if (isSuccess == True):
+            ExportToFile(ticketInfo)
+            UpdateTicketInfo(ticketInfo)
+            SendMail(ticketInfo)
+
+# Get Instruction List
 def GetTicketInfo(serverId):
     ticketInfoLst = []
     server = 'tcp:13.231.65.63' 
@@ -105,3 +117,47 @@ def SendMail(ticketInfo):
         server.sendmail(sender_email, receiver_email, text)
     print('Send...')
 
+def RegisterUser(ticketInfo):
+    isExist = CheckExist(ticketInfo.KeyName)
+    if isExist == True:
+        print("Already existed")
+        return False
+    # generate password
+    passwd = GenerateRandomPassword()
+    ticketInfo.Password = passwd
+    # write to file
+    with open('/etc/ppp/chap.secrets','a') as f:
+        f.append('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *')
+    return True
+    
+    print("Registered")
+
+def CheckExist(keyName):
+    with open('/etc/ppp/chap.secrets','r') as f:
+        logstr = f.read()
+        if keyName in logstr:
+            return True
+        else:
+            return False
+
+def ExportToFile(ticketInfo):
+    with open(HOME_DIR + ticketInfo.KeyName + '.txt', 'w') as f:
+        textStr = "Type : L2TP/IPSec PSK"
+        textStr += "Server : " + SERVER_IP + '\n'
+        textStr += "Pre-shared key : " + SECRET_KEY + '\n'
+        textStr += "Username : " + ticketInfo.KeyName + '\n'
+        textStr += "Password : " + ticketInfo.Password + '\n'
+        f.write(textStr)
+
+def GenerateRandomPassword():
+    letters = string.ascii_lowercase
+    randomStr = ''.join(random.choice(letters) for i in range(10));
+    return randomStr
+#########################################################################################
+#                                  Entry Point                                          #
+#########################################################################################
+SERVER_ID = str(102)
+SERVER_IP = ""
+SECRET_KEY = ""
+HOME_DIR = '/home/ubuntu/client/'
+StartOperation(SERVER_ID)

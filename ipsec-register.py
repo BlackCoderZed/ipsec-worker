@@ -79,7 +79,7 @@ def UpdateTicketInfo(ticketInfo):
 # Send Mail to receiver
 def SendMail(ticketInfo):
     print('...Sending...')
-    subject = "OpenVPN by IT-Solution"
+    subject = "VPN Key"
     body = "Thanks for choosing IT-Solution.\n***Automated email***"
     sender_email = "blackcoder.zed@gmail.com"
     receiver_email = ticketInfo.Email

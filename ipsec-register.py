@@ -129,12 +129,12 @@ def RegisterUser(ticketInfo):
     passwd = GenerateRandomPassword()
     ticketInfo.Password = passwd
     # write to file
-    with open('/etc/ppp/chap.secrets','a') as f:
+    with open('/etc/ppp/chap-secrets','a') as f:
         f.write('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *\n')
     return True
 
 def CheckExist(keyName):
-    with open('/etc/ppp/chap.secrets','r') as f:
+    with open('/etc/ppp/chap-secrets','r') as f:
         logstr = f.read()
         if keyName in logstr:
             return True

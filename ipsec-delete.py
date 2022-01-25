@@ -24,12 +24,12 @@ def DeleteClient(ServerID):
 def DeleteRecord(username):
     print('Deleting...')
     lines = []
-    with open('/etc/ppp/chap.secrets','r') as f:
+    with open('/etc/ppp/chap-secrets','r') as f:
         lines = f.readlines()
         for line in lines:
             if username in line:
                 lines.remove(line)
-    with open('/etc/ppp/chap.secrets','w') as f:
+    with open('/etc/ppp/chap-secrets','w') as f:
         f.writelines(lines)
         
 

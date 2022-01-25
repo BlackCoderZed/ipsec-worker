@@ -130,7 +130,7 @@ def RegisterUser(ticketInfo):
     ticketInfo.Password = passwd
     # write to file
     with open('/etc/ppp/chap.secrets','a') as f:
-        f.write('\n"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *')
+        f.write('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *\n')
     return True
 
 def CheckExist(keyName):

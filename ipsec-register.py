@@ -128,9 +128,10 @@ def RegisterUser(ticketInfo):
     # generate password
     passwd = GenerateRandomPassword()
     ticketInfo.Password = passwd
+    ipaddress = CalculateIP()
     # write to file
     with open('/etc/ppp/chap-secrets','a') as f:
-        f.write('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" *\n')
+        f.write('"'+ticketInfo.KeyName+'" l2tpd "' + passwd + '" ' + ipaddress + '\n')
     return True
 
 def CheckExist(keyName):
@@ -157,11 +158,34 @@ def GenerateRandomPassword():
     randomStr = ''.join(random.choice(letters) for i in range(10));
     return randomStr
 
+def GetCurrentIPList():
+    ipList = []
+    with open('/etc/ppp/chap-secrets','r') as f:
+        logstr = f.readlines()
+        ip = logstr.split(" ")[3].replace("\n","")
+        ipList.append(ip)
+    return ipList
+        
+
+def CalculateIP():
+    ipList = GetCurrentIPList()
+    ipresult = ""
+    for i in range(10, 100):
+        calculatedIP = IP_Prefix + str(i)
+        if calculatedIP not in ipList:
+            ipresult = calculatedIP
+            break;
+    return ipresult
+            
+
 #########################################################################################
 #                                  Entry Point                                          #
 #########################################################################################
 SERVER_ID = str(102)
 SERVER_IP = ""
 SECRET_KEY = ""
+IP_Prefix = "192.168.40."
+IP_START = "192.168.40.10"
+IP_END = "192.168.40.100"
 HOME_DIR = '/home/ubuntu/client/'
 StartOperation(SERVER_ID)

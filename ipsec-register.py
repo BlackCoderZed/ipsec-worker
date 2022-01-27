@@ -161,9 +161,10 @@ def GenerateRandomPassword():
 def GetCurrentIPList():
     ipList = []
     with open('/etc/ppp/chap-secrets','r') as f:
-        logstr = f.readlines()
-        ip = logstr.split(" ")[3].replace("\n","")
-        ipList.append(ip)
+        lines = f.readlines()
+        for line in lines:
+            ip = line.split(" ")[3].replace("\n","")
+            ipList.append(ip)
     return ipList
         
 

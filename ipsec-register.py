@@ -184,8 +184,6 @@ def CalculateIP():
 SERVER_ID = str(102)
 SERVER_IP = ""
 SECRET_KEY = ""
-IP_Prefix = "192.168.40."
-IP_START = "192.168.40.10"
-IP_END = "192.168.40.100"
+IP_Prefix = "192.168.42."
 HOME_DIR = '/home/ubuntu/client/'
 StartOperation(SERVER_ID)

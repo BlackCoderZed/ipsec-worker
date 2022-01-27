@@ -162,7 +162,8 @@ def GetCurrentIPList():
     ipList = []
     with open('/etc/ppp/chap-secrets','r') as f:
         lines = f.readlines()
-        lines.remove('\n')
+        if '\n' in lines:
+            lines.remove('\n')
         for line in lines:
             ip = line.split(" ")[3].replace("\n","")
             ipList.append(ip)

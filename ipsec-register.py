@@ -36,7 +36,7 @@ def GetTicketInfo(serverId):
     authInfo = AUTH_INFO
     reqInfo = REQ_INFO
     ticketInfoLst = []
-    wsdl = "http://localhost:65315/VPNAPIService.svc?WSDL"
+    wsdl = "http://13.231.65.63:8999/VPNAPIService.svc?wsdl"
     client = Client(wsdl)
     result = client.service.GetInstructionInfoList(authInfo, reqInfo)
 

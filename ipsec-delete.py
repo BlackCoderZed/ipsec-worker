@@ -69,6 +69,6 @@ def GetTicketInfo(serverId):
 
 SERVER_ID = str(121)
 HOME_DIR = '/home/ubuntu/client/'
-AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2019hacker'}
+AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2017hacker'}
 REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 103}
 DeleteClient(SERVER_ID)

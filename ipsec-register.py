@@ -176,6 +176,6 @@ SERVER_IP = ""
 SECRET_KEY = ""
 IP_Prefix = "192.168.42."
 HOME_DIR = '/home/ubuntu/client/'
-AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2019hacker'}
+AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2017hacker'}
 REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 101}
 StartOperation(SERVER_ID)

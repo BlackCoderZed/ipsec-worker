@@ -34,46 +34,33 @@ def DeleteRecord(username):
         
 
 def UpdateTicketInfo(ticketInfo):
-    server = 'tcp:13.231.65.63' 
-    database = 'It-Solution-OpenVPN' 
-    username = 'sa' 
-    password = 'Superm@n' 
-    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = cnxn.cursor()
-
-    query = "update Instructions Set InstructionStatusID = 2 where TicketID = "+ str(ticketInfo.TicketId) +";"
-    cursor.execute(query)
-    cursor.commit()
-    cursor.close()
-    cnxn.close()
+    authInfo = AUTH_INFO
+    serverId = SERVER_ID
+    ticketId = ticketInfo.TicketId
+    wsdl = "http://13.231.65.63:8999/VPNAPIService.svc?wsdl"
+    client = Client(wsdl)
+    result = client.service.CompleteInstructionTicket(authInfo, ticketId, serverId)
     print('Updated')
 
 def GetTicketInfo(serverId):
+    authInfo = AUTH_INFO
+    reqInfo = REQ_INFO
     ticketInfoLst = []
-    server = 'tcp:13.231.65.63' 
-    database = 'It-Solution-OpenVPN' 
-    username = 'sa' 
-    password = 'Superm@n' 
-    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = cnxn.cursor()
+    wsdl = "http://localhost:65315/VPNAPIService.svc?WSDL"
+    client = Client(wsdl)
+    result = client.service.GetInstructionInfoList(authInfo, reqInfo)
 
-    query = """select Inst.TicketID,Inst.CommandCode,KeyInfo.Name as [KeyName],Cust.EmailAddress as [Emai] from Instructions as Inst
-        inner join KeyInformations as KeyInfo on Inst.KeyInfoId = KeyInfo.Id inner join Customers as Cust on KeyInfo.CustomerID = Cust.CustomerId 
-        where Inst.CommandCode = 103 and Inst.InstructionStatusID = 1 and Inst.ServerID = """+serverId+""";"""
+    if(result.InstructionList is None or len(result.InstructionList) <= 0):
+        return ticketInfoLst
 
-
-    cursor.execute(query)
-    resultLst = cursor.fetchall()
-
-    for result in resultLst:
-        ticketId = result[0]
-        keyName = result[2]
-        email = result[3]
-        kInfo = KeyInfo(ticketId, keyName, '', email)
-        ticketInfoLst.append(kInfo)
-    cursor.close()
-    cnxn.close()
-
+    for instList in result.InstructionList:
+        for inst in instList[1]:
+            ticketId = inst[0]
+            keyName = inst[2]
+            email = inst[3]
+            kInfo = KeyInfo(ticketId, keyName, '', email)
+            ticketInfoLst.append(kInfo)
+    
     return ticketInfoLst
 
 #########################################################################################
@@ -82,4 +69,6 @@ def GetTicketInfo(serverId):
 
 SERVER_ID = str(121)
 HOME_DIR = '/home/ubuntu/client/'
+AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2019hacker'}
+REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 103}
 DeleteClient(SERVER_ID)

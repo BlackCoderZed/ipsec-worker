@@ -44,8 +44,8 @@ def GetTicketInfo(serverId):
     if(result.InstructionList is None or len(result.InstructionList) <= 0):
         return ticketInfoLst
 
-    for instList in resutl.InstrcutionList:
-        for inst in InstList[1]:
+    for instList in result.InstructionList:
+        for inst in instList[1]:
             ticketId = inst[0]
             keyName = inst[2]
             email = inst[3]
@@ -56,18 +56,12 @@ def GetTicketInfo(serverId):
 
 # Instruction Status Update
 def UpdateTicketInfo(ticketInfo):
-    server = 'tcp:13.231.65.63' 
-    database = 'It-Solution-OpenVPN' 
-    username = 'sa' 
-    password = 'Superm@n' 
-    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = cnxn.cursor()
-
-    query = "update Instructions Set InstructionStatusID = 2 where TicketID = "+ str(ticketInfo.TicketId) +";"
-    cursor.execute(query)
-    cursor.commit()
-    cursor.close()
-    cnxn.close()
+    authInfo = AUTH_INFO
+    serverId = SERVER_ID
+    ticketId = ticketInfo.TicketId
+    wsdl = "http://13.231.65.63:8999/VPNAPIService.svc?wsdl"
+    client = Client(wsdl)
+    result = client.service.CompleteInstructionTicket(authInfo, ticketId, serverId)
     print('Updated')
 
 # Send Mail to receiver

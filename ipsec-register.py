@@ -1,5 +1,5 @@
 #import pyodbc
-from suds.client inport Client
+from suds.client import Client
 import os
 import email, smtplib, ssl
 from email import encoders
@@ -41,10 +41,10 @@ def GetTicketInfo(serverId):
     client = Client(wsdl)
     result = client.service.GetInstructionInfoList(authInfo, reqInfo)
 
-    if(len(result.InstructionList) <= 0):
+    if(result.InstructionList is None or len(result.InstructionList) <= 0):
         return ticketInfoLst
 
-    for instList in resutl.InstrutionList:
+    for instList in resutl.InstrcutionList:
         for inst in InstList[1]:
             ticketId = inst[0]
             keyName = inst[2]

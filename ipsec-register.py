@@ -1,4 +1,3 @@
-#import pyodbc
 from suds.client import Client
 import os
 import email, smtplib, ssl

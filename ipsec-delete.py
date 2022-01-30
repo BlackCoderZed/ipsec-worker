@@ -1,5 +1,5 @@
-import pyodbc
 import os
+from suds.client import Client
 
 #########################################################################################
 #                                  KeyInfo Class                                        #

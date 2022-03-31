@@ -67,7 +67,7 @@ def GetTicketInfo(serverId):
 #                                  Entry Point                                          #
 #########################################################################################
 
-SERVER_ID = str(121)
+SERVER_ID = str(10009)
 HOME_DIR = '/home/ubuntu/client/'
 AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2017hacker'}
 REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 103}

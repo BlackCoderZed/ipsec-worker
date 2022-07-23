@@ -36,7 +36,7 @@ def GetTicketInfo(serverId):
     authInfo = AUTH_INFO
     reqInfo = REQ_INFO
     ticketInfoLst = []
-    wsdl = "http://13.231.65.63:8999/VPNAPIService.svc?wsdl"
+    wsdl = "http://18.178.57.209:8999/VPNAPIService.svc?wsdl"
     client = Client(wsdl)
     result = client.service.GetInstructionInfoList(authInfo, reqInfo)
 
@@ -58,7 +58,7 @@ def UpdateTicketInfo(ticketInfo):
     authInfo = AUTH_INFO
     serverId = SERVER_ID
     ticketId = ticketInfo.TicketId
-    wsdl = "http://13.231.65.63:8999/VPNAPIService.svc?wsdl"
+    wsdl = "http://18.178.57.209:8999/VPNAPIService.svc?wsdl"
     client = Client(wsdl)
     result = client.service.CompleteInstructionTicket(authInfo, ticketId, serverId)
     print('Updated')

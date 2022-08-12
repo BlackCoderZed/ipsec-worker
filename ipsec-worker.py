@@ -15,10 +15,15 @@ from pathlib import Path
 #########################################################################################
 
 class Configuration:
-    def __init__(self, ServerId, ServerIP, SecretKey):
+    def __init__(self, ServerId, ServerIP, SecretKey, EmailAddress, Password, SmtpServer, IpPrefix, SaveDir):
         self.ServerId = ServerId
         self.ServerIP = ServerIP
         self.SecretKey = SecretKey
+        self.EmailAddress = EmailAddress
+        self.Password = Password
+        self.SmtpServer = SmtpServer
+        self.IpPrefix = IpPrefix
+        self.SaveDir = SaveDir
 
     def LoadConfiguration():
         doc = minidom.parse("config.xml")
@@ -26,7 +31,12 @@ class Configuration:
         serverId = config.getElementsByTagName("ServerId")[0].firstChild.data
         serverIP = config.getElementsByTagName("ServerIP")[0].firstChild.data
         secretKey = config.getElementsByTagName("SecretKey")[0].firstChild.data
-        config = Configuration(serverId, serverIP, secretKey)
+        emailAddress = config.getElementsByTagName("EmailAddress")[0].firstChild.data
+        password = config.getElementsByTagName("Password")[0].firstChild.data
+        smtpAddress = config.getElementsByTagName("SmtpAddress")[0].firstChild.data
+        ipPrefix = config.getElementsByTagName("IpPrefix")[0].firstChild.data
+        saveDir = config.getElementsByTagName("SaveDir")[0].firstChild.data
+        config = Configuration(serverId, serverIP, secretKey, emailAddress, password, smtpAddress, ipPrefix, saveDir)
         return config
 
 
@@ -104,15 +114,15 @@ def SendMail(ticketInfo):
     print('...Sending...')
     subject = "VPN Key"
     body = "Thanks for choosing IT-Solution.\n***Automated email***"
-    sender_email = "admin@itsolutionmm.xyz"
+    sender_email = EMAIL_ADDRESS
     receiver_email = ticketInfo.Email
     filename = HOME_DIR + ticketInfo.KeyName + '.txt'
-    password = 'Password'
+    password = EMAIL_PASSWORD
     attachName = ticketInfo.KeyName + '.txt'
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
-    message["From"] = sender_email
+    message["From"] = EMAIL_ADDRESS
     message["To"] = receiver_email
     message["Subject"] = subject
     message["Bcc"] = receiver_email
@@ -138,7 +148,7 @@ def SendMail(ticketInfo):
 
     # Log in to server using secure context and send email
     context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.titan.email", 465, context=context) as server:
+    with smtplib.SMTP_SSL(SMTP_ADDRESS, 465, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, text)
     print('Send...')
@@ -158,12 +168,14 @@ def RegisterUser(ticketInfo):
     return True
 
 def CheckExist(keyName):
+    isExist = False
     with open('/etc/ppp/chap-secrets','r') as f:
         logstr = f.read()
         if keyName in logstr:
-            return True
+            isExist = True
         else:
-            return False
+            isExist = False
+    return isExist
 
 def ExportToFile(ticketInfo):
     myfile = Path(HOME_DIR + ticketInfo.KeyName + '.txt')
@@ -211,8 +223,11 @@ config = Configuration.LoadConfiguration()
 SERVER_ID = config.ServerId
 SERVER_IP = config.ServerIP
 SECRET_KEY = config.SecretKey
-IP_Prefix = "192.168.42."
-HOME_DIR = '/home/ubuntu/client/'
+EMAIL_ADDRESS = config.EmailAddress
+EMAIL_PASSWORD = config.Password
+SMTP_ADDRESS = config.SmtpServer
+IP_Prefix = config.IpPrefix
+HOME_DIR = config.SaveDir
 AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2017hacker'}
 REGISTER_REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 101}
 DELETE_REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 103}

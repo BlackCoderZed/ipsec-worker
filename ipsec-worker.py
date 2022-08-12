@@ -26,7 +26,8 @@ class Configuration:
         self.SaveDir = SaveDir
 
     def LoadConfiguration():
-        doc = minidom.parse("config.xml")
+        filedir = os.path.dirname(os.path.realpath(__file__))
+        doc = minidom.parse(filedir+"/config.xml")
         config = doc.getElementsByTagName("config")[0]
         serverId = config.getElementsByTagName("ServerId")[0].firstChild.data
         serverIP = config.getElementsByTagName("ServerIP")[0].firstChild.data

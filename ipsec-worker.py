@@ -40,7 +40,6 @@ class Configuration:
         return config
 
 
-
 class KeyInfo:
     def __init__(self, TicketId, KeyName, Password, Email):
         self.TicketId = TicketId

@@ -1,4 +1,5 @@
 from suds.client import Client
+from xml.dom import minidom
 import os
 import email, smtplib, ssl
 from email import encoders
@@ -12,6 +13,23 @@ from pathlib import Path
 #########################################################################################
 #                                  KeyInfo Class                                        #
 #########################################################################################
+
+class Configuration:
+    def __init__(self, ServerId, ServerIP, SecretKey):
+        self.ServerId = ServerId
+        self.ServerIP = ServerIP
+        self.SecretKey = SecretKey
+
+    def LoadConfiguration():
+        doc = minidom.parse("config.xml")
+        config = doc.getElementsByTagName("config")[0]
+        serverId = config.getElementsByTagName("ServerId")[0].firstChild.data
+        serverIP = config.getElementsByTagName("ServerIP")[0].firstChild.data
+        secretKey = config.getElementsByTagName("SecretKey")[0].firstChild.data
+        config = Configuration(serverId, serverIP, secretKey)
+        return config
+
+
 
 class KeyInfo:
     def __init__(self, TicketId, KeyName, Password, Email):
@@ -189,9 +207,10 @@ def CalculateIP():
 #########################################################################################
 #                                  Entry Point                                          #
 #########################################################################################
-SERVER_ID = str(130)
-SERVER_IP = ""
-SECRET_KEY = ""
+config = Configuration.LoadConfiguration()
+SERVER_ID = config.ServerId
+SERVER_IP = config.ServerIP
+SECRET_KEY = config.SecretKey
 IP_Prefix = "192.168.42."
 HOME_DIR = '/home/ubuntu/client/'
 AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2017hacker'}

@@ -7,4 +7,5 @@
 	<SmtpAddress>smtp.titan.email</SmtpAddress>
 	<IpPrefix>192.168.42.</IpPrefix>
 	<SaveDir>/home/ubuntu/client/</SaveDir>
+	<APIUrl>http://18.178.57.209:8999/VPNAPIService.svc?wsdl</APIUrl>
 </config>

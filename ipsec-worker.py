@@ -11,11 +11,11 @@ import random
 from pathlib import Path
 
 #########################################################################################
-#                                  KeyInfo Class                                        #
+#                                  Config Class                                         #
 #########################################################################################
 
 class Configuration:
-    def __init__(self, ServerId, ServerIP, SecretKey, EmailAddress, Password, SmtpServer, IpPrefix, SaveDir):
+    def __init__(self, ServerId, ServerIP, SecretKey, EmailAddress, Password, SmtpServer, IpPrefix, SaveDir, ApiUrl):
         self.ServerId = ServerId
         self.ServerIP = ServerIP
         self.SecretKey = SecretKey
@@ -24,6 +24,7 @@ class Configuration:
         self.SmtpServer = SmtpServer
         self.IpPrefix = IpPrefix
         self.SaveDir = SaveDir
+        self.ApiUrl = ApiUrl
 
     def LoadConfiguration():
         filedir = os.path.dirname(os.path.realpath(__file__))
@@ -37,9 +38,13 @@ class Configuration:
         smtpAddress = config.getElementsByTagName("SmtpAddress")[0].firstChild.data
         ipPrefix = config.getElementsByTagName("IpPrefix")[0].firstChild.data
         saveDir = config.getElementsByTagName("SaveDir")[0].firstChild.data
-        config = Configuration(serverId, serverIP, secretKey, emailAddress, password, smtpAddress, ipPrefix, saveDir)
+        apiUrl = config.getElementsByTagName("APIUrl")[0].firstChild.data
+        config = Configuration(serverId, serverIP, secretKey, emailAddress, password, smtpAddress, ipPrefix, saveDir, apiUrl)
         return config
 
+#########################################################################################
+#                                  KeyInfo Class                                        #
+#########################################################################################
 
 class KeyInfo:
     def __init__(self, TicketId, KeyName, Password, Email):
@@ -78,11 +83,11 @@ def DeleteRecord(username):
         f.writelines(lines)
 
 # Get Instruction List
-def GetTicketInfo(reqInfo):
+def GetTicketInfo(requestInfo):
     authInfo = AUTH_INFO
-    reqInfo = reqInfo
+    reqInfo = requestInfo
     ticketInfoLst = []
-    wsdl = "http://18.178.57.209:8999/VPNAPIService.svc?wsdl"
+    wsdl = API_URL
     client = Client(wsdl)
     result = client.service.GetInstructionInfoList(authInfo, reqInfo)
 
@@ -104,7 +109,7 @@ def UpdateTicketInfo(ticketInfo):
     authInfo = AUTH_INFO
     serverId = SERVER_ID
     ticketId = ticketInfo.TicketId
-    wsdl = "http://18.178.57.209:8999/VPNAPIService.svc?wsdl"
+    wsdl = API_URL
     client = Client(wsdl)
     result = client.service.CompleteInstructionTicket(authInfo, ticketId, serverId)
     print('Updated')
@@ -228,6 +233,7 @@ EMAIL_PASSWORD = config.Password
 SMTP_ADDRESS = config.SmtpServer
 IP_Prefix = config.IpPrefix
 HOME_DIR = config.SaveDir
+API_URL = config.ApiUrl
 AUTH_INFO = {'UserID' : 'APIUser', 'Password' : '2017hacker'}
 REGISTER_REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 101}
 DELETE_REQ_INFO = {'ServerID' : SERVER_ID, 'CommandCode' : 103}

@@ -2,10 +2,10 @@
 	<ServerId>103</ServerId>
 	<ServerIP>18.139.18.18</ServerIP>
 	<SecretKey>dkjfiejlsjdkfjslf</SecretKey>
-	<EmailAddress>admin@itsolutionmm.xyz</EmailAddress>
+	<EmailAddress>itsolutionmm.service@gmail.com</EmailAddress>
 	<Password>-</Password>
-	<SmtpAddress>smtp.titan.email</SmtpAddress>
+	<SmtpAddress>smtp-mail.outlook.com</SmtpAddress>
 	<IpPrefix>192.168.42.</IpPrefix>
 	<SaveDir>/home/ubuntu/client/</SaveDir>
-	<APIUrl>http://18.178.57.209:8999/VPNAPIService.svc?wsdl</APIUrl>
+	<APIUrl>http://3.1.224.21:8999/VPNAPIService.svc?wsdl</APIUrl>
 </config>

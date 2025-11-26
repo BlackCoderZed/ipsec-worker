@@ -60,9 +60,9 @@ def StartRegistrationProcess():
         isSuccess = RegisterUser(ticketInfo)
         if (isSuccess == True):
             print("User Registeration success")
-            ExportToFile(ticketInfo)
+            conf_path = ExportToFile(ticketInfo)
             UpdateTicketInfo(ticketInfo)
-            SendMail(ticketInfo)
+            SendKey(ticketInfo, conf_path)
 
 def StartDeleteProcess():
     ticketInfoLst = GetTicketInfo(DELETE_REQ_INFO)
@@ -113,6 +113,52 @@ def UpdateTicketInfo(ticketInfo):
     client = Client(wsdl)
     result = client.service.CompleteInstructionTicket(authInfo, ticketId, serverId)
     print('Updated')
+
+def ReadConfig(conf_path):
+    with open(conf_path, "r", encoding="utf-8") as f:
+        return f.read()
+
+def SendKey(ticketInfo, conf_path):
+    print("Sending to API...")
+
+    keycontent_conf = ReadConfig(conf_path)
+    #keycontent_qr = ReadFileAsBase64(qr_path)
+
+    keyname_conf = os.path.basename(conf_path)
+    #keyname_qr = os.path.splitext(keyname_conf)[0] + ".png"
+
+    client = Client(API_URL)
+
+    # Create main SOAP request
+    req = client.factory.create("ns1:ReqMultiSendKeyInfo")
+    req.Email = ticketInfo.Email
+    req.ServerID = SERVER_ID
+    req.Subject = "L2TP by IT-Solution"
+
+    # Create SOAP array of files
+    req.KeyFiles = client.factory.create("ns1:ArrayOfKeyFileInfo")
+    req.KeyFiles.KeyFileInfo = []
+
+    # ---------- 1) CONF FILE ----------
+    kf_conf = client.factory.create("ns1:KeyFileInfo")
+    kf_conf.KeyContent = keycontent_conf
+    kf_conf.KeyName = keyname_conf
+    kf_conf.MediaType = "text/plain"
+    req.KeyFiles.KeyFileInfo.append(kf_conf)
+
+    # ---------- 2) QR PNG FILE ----------
+    #kf_qr = client.factory.create("ns1:KeyFileInfo")
+    #kf_qr.KeyContent = keycontent_qr
+    #kf_qr.KeyName = keyname_qr
+    #kf_qr.MediaType = "image/png"
+    #req.KeyFiles.KeyFileInfo.append(kf_qr)
+
+    # Call API
+    client.service.SendMultipleKey(AUTH_INFO, req)
+
+    print("Complete...")
+
+
 
 # Send Mail to receiver
 def SendMail(ticketInfo):
@@ -184,15 +230,17 @@ def CheckExist(keyName):
     return isExist
 
 def ExportToFile(ticketInfo):
-    myfile = Path(HOME_DIR + ticketInfo.KeyName + '.txt')
+    file_path = os.path.join(HOME_DIR, ticketInfo.KeyName + ".txt")
+    myfile = Path(file_path)
     myfile.touch(exist_ok=True)
     with open(myfile, 'w') as f:
         textStr = "Type : L2TP/IPSec PSK" + '\n'
         textStr += "Server : " + SERVER_IP + '\n'
-        textStr += "Pre-shared key : " + SECRET_KEY + '\n'
-        textStr += "Username : " + ticketInfo.KeyName + '\n'
+        textStr += "Secret : " + SECRET_KEY + '\n'
+        textStr += "Account : " + ticketInfo.KeyName + '\n'
         textStr += "Password : " + ticketInfo.Password + '\n'
         f.write(textStr)
+    return file_path
 
 def GenerateRandomPassword():
     letters = string.ascii_lowercase + string.ascii_uppercase + str(1234567890)

@@ -155,9 +155,7 @@ def SendKey(ticketInfo, conf_path):
 
     # Call API
     client.service.SendMultipleKey(AUTH_INFO, req)
-
     print("Complete...")
-
 
 
 # Send Mail to receiver
@@ -231,16 +229,23 @@ def CheckExist(keyName):
 
 def ExportToFile(ticketInfo):
     file_path = os.path.join(HOME_DIR, ticketInfo.KeyName + ".txt")
+
+    # Ensure directory exists
+    os.makedirs(HOME_DIR, exist_ok=True)
+
     myfile = Path(file_path)
     myfile.touch(exist_ok=True)
-    with open(myfile, 'w') as f:
-        textStr = "Type : L2TP/IPSec PSK" + '\n'
-        textStr += "Server : " + SERVER_IP + '\n'
-        textStr += "Secret : " + SECRET_KEY + '\n'
-        textStr += "Account : " + ticketInfo.KeyName + '\n'
-        textStr += "Password : " + ticketInfo.Password + '\n'
+
+    with open(file_path, "w") as f:
+        textStr = "Type : L2TP\n"
+        textStr += "Server : " + SERVER_IP + "\n"
+        textStr += "Secret : " + SECRET_KEY + "\n"
+        textStr += "Account : " + ticketInfo.KeyName + "\n"
+        textStr += "Password : " + ticketInfo.Password + "\n"
         f.write(textStr)
+
     return file_path
+
 
 def GenerateRandomPassword():
     letters = string.ascii_lowercase + string.ascii_uppercase + str(1234567890)

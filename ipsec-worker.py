@@ -243,7 +243,6 @@ def ExportToFile(ticketInfo):
         textStr += "Account : " + ticketInfo.KeyName + "\n"
         textStr += "Password : " + ticketInfo.Password + "\n"
         f.write(textStr)
-
     return file_path
 
 
